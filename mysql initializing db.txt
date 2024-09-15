@@ -1,0 +1,54 @@
+create DATABASE upang_eats;
+
+CREATE TABLE users (
+    user_id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    student_id varchar(14) UNIQUE,
+    first_name VARCHAR(255),
+    last_name VARCHAR(255),
+    email VARCHAR(255) UNIQUE,
+    password VARCHAR(255),
+    phone_number VARCHAR(11),
+    user_type ENUM('user', 'stall_owner') DEFAULT 'user'
+);
+
+CREATE TABLE stalls (
+    stall_id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    stall_name VARCHAR(255) NOT NULL,
+    owner_id INT REFERENCES users(user_id),
+    description TEXT,
+    contact_number VARCHAR(11),
+    image_url VARCHAR(255),
+    is_active BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE food_items (
+    item_id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    stall_id INT REFERENCES stalls(stall_id),
+    item_name VARCHAR(255) NOT NULL,
+    description TEXT,
+    price int(10) NOT NULL,
+    image_url VARCHAR(255),
+    is_available BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE order_items (
+    order_item_id SERIAL PRIMARY KEY,
+    order_id INT REFERENCES orders(order_id) NOT NULL,
+    item_id INT REFERENCES food_items(item_id) NOT NULL,
+    quantity INT NOT NULL,
+    subtotal DECIMAL(10, 2) NOT NULL
+);
+
+CREATE TABLE order_items (
+    order_item_id int NOT NULL PRIMARY KEY,
+    order_id INT REFERENCES orders(order_id),
+    item_id INT REFERENCES food_items(item_id),
+    quantity INT NOT NULL,
+    subtotal INT(10) NOT NULL
+);
+
+CREATE TABLE bookmarks (
+    bookmark_id INT NOT NULL PRIMARY KEY,
+    user_id INT REFERENCES users(user_id),
+    stall_id INT REFERENCES stalls(stall_id)
+);
