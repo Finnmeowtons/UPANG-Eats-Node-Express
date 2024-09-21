@@ -35,6 +35,15 @@ CREATE TABLE food_items (
     is_merienda BOOLEAN DEFAULT FALSE
 );
 
+-- user is still browsing/adding items stage
+CREATE TABLE tray (
+    cart_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    user_id INT REFERENCES users(user_id),
+    item_id INT REFERENCES food_items(item_id),
+    quantity INT NOT NULL
+);
+
+-- Confirmed tray and successful payment
 -- One order can have multiple items therefore we created a one to many relationship (order_items table)
 -- Why we shouldn't make the order(receipt) have multiple stall because of the order_status
 -- Meaning if we create a many-to-many relationship with order_stall that can make the order(receipt) have many stalls
