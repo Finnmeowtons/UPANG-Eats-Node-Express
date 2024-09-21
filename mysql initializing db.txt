@@ -87,3 +87,34 @@ INSERT INTO `stalls` (`stall_id`, `stall_name`, `owner_id`, `description`, `cont
 
 //Categories record
 INSERT INTO `categories`(`category_name`) VALUES ('Snack'), ('Burger'), ('Rice Meal'), ('Drinks'), ('Noodles'), ('Dimsum'), ('Fries'), ('Bread');
+
+//Food items record (stalls record is required)
+INSERT INTO `food_items` (`stall_id`, `item_name`, `description`, `price`, `image_url`, `is_available`, `is_breakfast`, `is_lunch`, `is_merienda`) 
+VALUES 
+-- Stall 1
+(1, 'Lumpiang Shanghai', 'Deep-fried spring rolls with meat filling', 50.00, '', 1, 0, 1, 1),
+(1, 'Chicken Burger', 'Chicken patty in a soft bun with lettuce and mayo', 75.00, '', 1, 0, 1, 0),
+(1, 'Tapsilog', 'Beef tapa with fried egg and garlic rice', 120.00, '', 1, 1, 1, 0),
+(1, 'Pancit Canton', 'Stir-fried noodles with vegetables and meat', 65.00, '', 1, 0, 1, 1),
+(1, 'Siomai', 'Steamed pork dumplings served with soy sauce', 35.00, '', 1, 0, 1, 1),
+
+-- Stall 2
+(2, 'Turon', 'Banana wrapped in spring roll wrapper and fried', 20.00, '', 1, 0, 0, 1),
+(2, 'Cheeseburger', 'Juicy beef patty with cheese in a bun', 85.00, '', 1, 0, 1, 0),
+(2, 'Adobo Rice Meal', 'Savory chicken adobo with rice', 110.00, '', 1, 1, 1, 0),
+(2, 'Buko Juice', 'Fresh coconut juice', 30.00, '', 1, 0, 1, 1),
+(2, 'Kikiam', 'Deep-fried pork sausage served with sauce', 35.00, '', 1, 0, 1, 1),
+
+-- Stall 3
+(3, 'Banana Cue', 'Caramelized bananas on a stick', 25.00, '', 1, 0, 0, 1),
+(3, 'Double Burger', 'Double beef patty with cheese and bacon', 120.00, '', 1, 0, 1, 0),
+(3, 'Longsilog', 'Sweet longganisa with fried egg and garlic rice', 95.00, '', 1, 1, 1, 0),
+(3, 'Mami Noodles', 'Hot beef noodle soup', 70.00, '', 1, 0, 1, 1),
+(3, 'French Fries', 'Crispy potato fries', 45.00, '', 1, 0, 1, 1),
+
+-- Stall 4
+(4, 'Puto', 'Steamed rice cakes', 15.00, '', 1, 0, 0, 1),
+(4, 'Bacon Cheeseburger', 'Beef patty with bacon and cheese', 105.00, '', 1, 0, 1, 0),
+(4, 'Lechon Kawali Meal', 'Crispy fried pork belly with rice', 130.00, '', 1, 1, 1, 0),
+(4, 'Sago’t Gulaman', 'Sweet tapioca pearls and gelatin drink', 25.00, '', 1, 0, 1, 1),
+(4, 'Siopao', 'Steamed bun with pork filling', 40.00, '', 1, 0, 1, 1);

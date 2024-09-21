@@ -15,7 +15,6 @@ exports.getAllStalls = async (req, res) => {
 
 exports.getStallById = async (req, res) => {
     try {
-        console.log("wow")
         const stallId = req.params.id;
         const [results, fields] = await connection.query('SELECT * FROM stalls WHERE stall_id = ?', [stallId]);
 
@@ -63,7 +62,7 @@ exports.updateStall = async (req, res) => {
         );
 
         if (result.affectedRows === 0) {
-            return res.stall(404).json({error: 'Stall not found'})
+            return res.status(404).json({error: 'Stall not found'})
         }
 
         const [updatedStallData] = await connection.query(
@@ -82,7 +81,7 @@ exports.deleteStall = async (req, res) => {
     try{
         const stallId = req.params.id;
 
-        const [result, query] = await connection.query('DELETE FROM stalls WHERE stall_id = ?', stallId);
+        const [result, fields] = await connection.query('DELETE FROM stalls WHERE stall_id = ?', stallId);
 
         if (result.affectedRows === 0 ) {
             return res.status(404).json({error: 'Stall not found'})
