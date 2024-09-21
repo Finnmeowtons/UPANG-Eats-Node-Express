@@ -35,6 +35,11 @@ CREATE TABLE food_items (
     is_merienda BOOLEAN DEFAULT FALSE
 );
 
+-- One order can have multiple items therefore we created a one to many relationship (order_items table)
+-- Why we shouldn't make the order(receipt) have multiple stall because of the order_status
+-- Meaning if we create a many-to-many relationship with order_stall that can make the order(receipt) have many stalls
+-- It would complicate the order_status, what if the order_items are ready in stall #1 and the order_items in stall #2 is cancelled due to unexpected circumstance
+-- how will the order(receipt) handles the order status?
 CREATE TABLE orders (
     order_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     user_id INT REFERENCES users(user_id),
@@ -55,6 +60,7 @@ CREATE TABLE order_items (
 CREATE TABLE bookmarks (
     bookmark_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     user_id INT REFERENCES users(user_id),
+    item_id INT REFERENCES food_items(item_id),
     stall_id INT REFERENCES stalls(stall_id)
 );
 
