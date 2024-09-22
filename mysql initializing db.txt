@@ -36,8 +36,8 @@ CREATE TABLE food_items (
 );
 
 -- user is still browsing/adding items stage
-CREATE TABLE tray (
-    cart_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE trays (
+    tray_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     user_id INT REFERENCES users(user_id),
     item_id INT REFERENCES food_items(item_id),
     quantity INT NOT NULL

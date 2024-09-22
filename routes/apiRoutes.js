@@ -3,8 +3,12 @@ const router = express.Router();
 const stallsController = require('../controllers/stallController');
 const userController = require('../controllers/userController');
 const foodController = require('../controllers/foodController');
+const trayController = require('../controllers/trayController');
 const orderController = require('../controllers/orderController');
 const orderItemsController = require('../controllers/orderItemsController');
+const bookmarkController = require('../controllers/bookmarkController');
+const categoryController = require('../controllers/categoryController');
+const foodItemCategoryController = require('../controllers/foodItemCategoryController');
 
 //Stalls
 router.get('/stalls', stallsController.getAllStalls);
@@ -23,9 +27,17 @@ router.delete('/users/:id', userController.deleteUser);
 //Food Items
 router.get('/foods', foodController.getAllFoods);
 router.get('/foods/:id', foodController.getFoodById);
+router.get('/foods/:id/categories', foodController.getFoodsByCategory); // Get foods by category
 router.post('/foods', foodController.createFood);
 router.put('/foods/:id', foodController.updateFood);
 router.delete('/foods/:id', foodController.deleteFood);
+
+//Trays
+router.get('/trays', trayController.getAllTrays);
+router.get('/trays/:id', trayController.getTrayById);
+router.post('/trays', trayController.createTray);
+router.put('/trays/:id', trayController.updateTray);
+router.delete('/trays/:id', trayController.deleteTray);
 
 //Orders 
 router.get('/orders', orderController.getAllOrders);
@@ -40,5 +52,20 @@ router.get('/orders/:id/items', orderItemsController.getOrderItemById);
 router.post('/orders/:id/items', orderItemsController.createOrderItem);
 router.delete('/orders/:id/items', orderItemsController.deleteOrderItem);
  
+//Bookmarks
+router.get('/bookmarks', bookmarkController.getAllBookmarks);
+router.get('/bookmarks/:id', bookmarkController.getBookmarkByUserId);
+router.post('/bookmarks', bookmarkController.createBookmark);
+router.delete('/bookmarks/:id', bookmarkController.deleteBookmark);
+ 
+//Categories
+router.get('/categories', categoryController.getAllCategories);
+router.post('/categories', categoryController.createCategory);
+router.put('/categories/:id', categoryController.updateCategoryName);
+router.delete('/categories/:id', categoryController.deleteCategory);
+//Associate Categories in Food Items 
+router.post('/foods/:id/categories', foodItemCategoryController.addCategoriesToFoodItem);
+
+
 
 module.exports = router;

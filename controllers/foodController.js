@@ -13,6 +13,27 @@ exports.getAllFoods = async (req, res) => {
     }
 }
 
+exports.getFoodsByCategory = async (req, res) => {
+    const categoryId = req.params.id;
+    console.log(categoryId)
+
+    try {
+        const [results, fields] = await connection.query(`
+            SELECT f.* 
+            FROM food_items f
+            JOIN food_item_categories fic ON f.item_id = fic.food_item_id
+            WHERE fic.category_id = ?`,
+            [categoryId]
+        );
+        const foods = results.map(row => new Food(...Object.values(row)));
+
+        res.json(foods);
+    } catch (error) {
+        console.error('Error fetching foods:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
 exports.getFoodById = async (req, res) => {
     try {
         const foodId = req.params.id;
