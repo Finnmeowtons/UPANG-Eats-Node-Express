@@ -35,22 +35,25 @@ exports.createUser = async (req, res) => {
     try {
         const { student_id, first_name, last_name, email, password, phone_number, user_type } = req.body;
 
-        const [result, fields] = await connection.query(
+        // hashing the password before saving
+        const hashedPassword = await bcrypt.hash(password, 10); // 10 is the salt rounds
+
+        const [result] = await connection.query(
             'INSERT INTO users (student_id, first_name, last_name, email, password, phone_number, user_type) VALUES (?,?,?,?,?,?,?)',
-            [student_id, first_name, last_name, email, password, phone_number, user_type]
+            [student_id, first_name, last_name, email, hashedPassword, phone_number, user_type]
         );
 
         const newUserId = result.insertId;
 
         const [newUserData] = await connection.query('SELECT * FROM users WHERE user_id = ?', [newUserId]);
-        const newUser = new User(...Object.values(newUserData[0]))
+        const newUser = new User(...Object.values(newUserData[0]));
 
         res.status(201).json(newUser);
     } catch (error) {
-        console.error('Error fetching user:', error);
+        console.error('Error creating user:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
-}
+};
 
 exports.updateUser = async (req, res) => {
     try {
