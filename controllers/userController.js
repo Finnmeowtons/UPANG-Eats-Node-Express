@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const connection = require('../connection/connection');
+const bcrypt = require('bcrypt');
 
 exports.getAllUsers = async (req, res) => {
     try {
@@ -94,3 +95,52 @@ exports.deleteUser = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 }
+
+// login function
+exports.loginUser = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const [results] = await connection.query('SELECT * FROM users WHERE email = ?', [email]);
+
+        // no user
+        if (results.length === 0) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        const user = results[0];
+
+        // hashpassword and password
+        const isPasswordMatch = await bcrypt.compare(password, user.password);
+
+        if (!isPasswordMatch) {
+            return res.status(401).json({ error: 'Invalid credentials' });
+        }
+
+        // check user_type
+        let userTypeResponse;
+        switch (user.user_type) {
+            case 'admin':
+                userTypeResponse = 'Admin access granted';
+                break;
+            case 'stall_owner':
+                userTypeResponse = 'Stall owner access granted';
+                break;
+            case 'user':
+                userTypeResponse = 'User access granted';
+                break;
+            default:
+                userTypeResponse = 'Unknown user type';
+        }
+
+        // success
+        res.status(200).json({
+            user_id: user.user_id,
+            email: user.email,
+            user_type: user.user_type,
+            message: userTypeResponse,
+        });
+    } catch (error) {
+        console.error('Error logging in user:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};

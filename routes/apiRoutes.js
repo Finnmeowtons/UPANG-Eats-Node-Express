@@ -20,9 +20,12 @@ router.delete('/stalls/:id', stallsController.deleteStall);
 //Users
 router.get('/users', userController.getAllUsers);
 router.get('/users/:id', userController.getUserById);
-router.post('/users', userController.createUser);
+router.post('/users', userController.createUser); //palitan sana ng create naka /users kase
 router.put('/users/:id', userController.updateUser);
 router.delete('/users/:id', userController.deleteUser);
+
+//Login
+router.post('/login', userController.loginUser);
 
 //Food Items
 router.get('/foods', foodController.getAllFoods);
@@ -65,7 +68,5 @@ router.put('/categories/:id', categoryController.updateCategoryName);
 router.delete('/categories/:id', categoryController.deleteCategory);
 //Associate Categories in Food Items 
 router.post('/foods/:id/categories', foodItemCategoryController.addCategoriesToFoodItem);
-
-
 
 module.exports = router;
