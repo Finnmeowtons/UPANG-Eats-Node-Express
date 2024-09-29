@@ -16,11 +16,11 @@ exports.getAllCategories = async (req, res) => {
 
 exports.createCategory = async (req, res) => {
     try {
-        const { category_name } = req.body;
+        const { category_name, image_url } = req.body;
         console.log(category_name);
         const [result, fields] = await connection.query(
-            'INSERT INTO categories (category_name) VALUES (?)',
-            [category_name]
+            'INSERT INTO categories (category_name, image_url) VALUES (?, ?)',
+            [category_name, image_url]
         );
         
         const newCategoryId = result.insertId;
@@ -39,11 +39,11 @@ exports.createCategory = async (req, res) => {
 exports.updateCategoryName = async (req, res) => {
     try {
         const categoryId = req.params.id;
-        const { category_name } = req.body;
+        const { category_name, image_url } = req.body;
 
         const [result, fields] = await connection.query(
-            'UPDATE categories SET category_name = ? WHERE category_id = ?',
-            [category_name, categoryId]
+            'UPDATE categories SET category_name = ?, image_url = ? WHERE category_id = ?',
+            [category_name, image_url, categoryId]
         );
 
         if (result.affectedRows === 0) {
