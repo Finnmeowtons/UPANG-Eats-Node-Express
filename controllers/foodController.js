@@ -3,8 +3,16 @@ const connection = require("../connection/connection");
 
 exports.getAllFoods = async (req, res) => {
     try {
-        const [results, fields] = await connection.query('SELECT * FROM food_items');
-        const foods = results.map(row => new Food(...Object.values(row)));
+        const [results, fields] = await connection.query(`
+            SELECT f.*, s.stall_name
+            FROM food_items f
+            JOIN stalls s ON f.stall_id = s.stall_id
+            `);
+        const foods = results.map(row => {
+            const food = new Food(...Object.values(row));
+            food.stall_name = row.stall_name;
+            return food;
+        });
 
         res.json(foods);
     } catch (error) {
@@ -19,13 +27,18 @@ exports.getFoodsByCategory = async (req, res) => {
 
     try {
         const [results, fields] = await connection.query(`
-            SELECT f.* 
+            SELECT f.*, s.stall_name
             FROM food_items f
             JOIN food_item_categories fic ON f.item_id = fic.food_item_id
+            JOIN stalls s ON f.stall_id = s.stall_id
             WHERE fic.category_id = ?`,
             [categoryId]
         );
-        const foods = results.map(row => new Food(...Object.values(row)));
+        const foods = results.map(row => {
+            const food = new Food(...Object.values(row));
+            food.stall_name = row.stall_name;
+            return food;
+        });
 
         res.json(foods);
     } catch (error) {
@@ -37,14 +50,23 @@ exports.getFoodsByCategory = async (req, res) => {
 exports.getFoodById = async (req, res) => {
     try {
         const foodId = req.params.id;
-        const [results, fields] = await connection.query('SELECT * FROM food_items WHERE item_id = ?', [foodId]);
+        const [results, fields] = await connection.query(`
+            SELECT f.*, s.stall_name
+            FROM food_items f
+            JOIN stalls s ON f.stall_id = s.stall_id
+            WHERE item_id = ?
+            `, [foodId]);
 
         if (results.length === 0) {
             return res.status(404).json({ error: 'Food not found' })
         }
 
-        const food = new Food(...Object.values(results[0]));
-        res.json(food);
+        const foods = results.map(row => {
+            const food = new Food(...Object.values(results[0]));
+            food.stall_name = row.stall_name;
+            return food;
+        });
+        res.json(foods);
     } catch (error) {
         console.error('Error fetching food:', error);
         res.status(500).json({ error: 'Internal server error' });
