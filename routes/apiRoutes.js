@@ -31,6 +31,7 @@ router.post('/login', userController.loginUser);
 router.get('/foods', foodController.getAllFoods);
 router.get('/foods/:id', foodController.getFoodById);
 router.get('/foods/:id/categories', foodController.getFoodsByCategory); // Get foods by category
+router.get('/foods/:id/stalls', foodController.getFoodsByStallId); // Get foods by category
 router.post('/foods', foodController.createFood);
 router.put('/foods/:id', foodController.updateFood);
 router.delete('/foods/:id', foodController.deleteFood);

@@ -73,6 +73,26 @@ exports.getFoodById = async (req, res) => {
     }
 }
 
+exports.getFoodsByStallId = async (req, res) => {
+    const stallId = req.params.id;
+    console.log(stallId)
+    try {
+        const [results, fields] = await connection.query(`
+            SELECT f.*
+            FROM food_items f
+            JOIN stalls s ON f.stall_id = s.stall_id
+            WHERE s.stall_id = ?`,
+            [stallId]
+        );
+        const foods = results.map(row => new Food(...Object.values(row)));
+
+        res.json(foods);
+    } catch (error) {
+        console.error('Error fetching foods:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
 exports.createFood = async (req, res) => {
     try {
         const { stall_id, item_name, description, price, image_url, is_available, is_breakfast, is_lunch, is_merienda } = req.body;
