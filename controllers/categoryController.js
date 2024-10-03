@@ -17,7 +17,7 @@ exports.getAllCategories = async (req, res) => {
 exports.createCategory = async (req, res) => {
     try {
         const { category_name, image_url } = req.body;
-        console.log(category_name);
+        
         const [result, fields] = await connection.query(
             'INSERT INTO categories (category_name, image_url) VALUES (?, ?)',
             [category_name, image_url]

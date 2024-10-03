@@ -23,7 +23,6 @@ exports.getAllFoods = async (req, res) => {
 
 exports.getFoodsByCategory = async (req, res) => {
     const categoryId = req.params.id;
-    console.log(categoryId)
 
     try {
         const [results, fields] = await connection.query(`
@@ -75,7 +74,6 @@ exports.getFoodById = async (req, res) => {
 
 exports.getFoodsByStallId = async (req, res) => {
     const stallId = req.params.id;
-    console.log(stallId)
     try {
         const [results, fields] = await connection.query(`
             SELECT f.*
