@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 29, 2024 at 04:51 PM
+-- Generation Time: Oct 02, 2024 at 05:45 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.12
 
@@ -64,15 +64,15 @@ CREATE TABLE `categories` (
 --
 
 INSERT INTO `categories` (`category_id`, `category_name`, `image_url`) VALUES
-(1, 'Snack', 'categories/Snack.png'),
-(2, 'Burger', 'categories/Burger.png'),
-(3, 'Rice Meal', 'categories/RiceMeal.png'),
-(4, 'Drinks', 'categories/Drinks.png'),
-(5, 'Noodles', 'categories/Noodles.png'),
-(6, 'Dimsum', 'categories/Dimsums.png'),
-(7, 'Fries', 'categories/Fries.png'),
-(8, 'Bread', 'categories/Bread.png'),
-(10, 'Soup', 'categories/Soup.png');
+(1, 'Snack', 'assets/categories/Snack.png'),
+(2, 'Burger', 'assets/categories/Burger.png'),
+(3, 'Rice Meal', 'assets/categories/RiceMeal.png'),
+(4, 'Drinks', 'assets/categories/Drinks.png'),
+(5, 'Noodles', 'assets/categories/Noodles.png'),
+(6, 'Dimsum', 'assets/categories/Dimsums.png'),
+(7, 'Fries', 'assets/categories/Fries.png'),
+(8, 'Bread', 'assets/categories/Bread.png'),
+(10, 'Soup', 'assets/categories/Soup.png');
 
 -- --------------------------------------------------------
 
@@ -98,7 +98,7 @@ CREATE TABLE `food_items` (
 --
 
 INSERT INTO `food_items` (`item_id`, `stall_id`, `item_name`, `description`, `price`, `image_url`, `is_available`, `is_breakfast`, `is_lunch`, `is_merienda`) VALUES
-(2, 1, 'Lumpiang Shanghai', 'Deep-fried spring rolls with meat filling', 50, '', 1, 0, 1, 1),
+(2, 1, 'Lumpiang Shanghai', 'Deep-fried spring rolls with meat filling', 50, 'assets/foods/1_1.jpg', 1, 0, 1, 1),
 (3, 1, 'Chicken Burger', 'Chicken patty in a soft bun with lettuce and mayo', 75, '', 1, 0, 1, 0),
 (4, 1, 'Tapsilog', 'Beef tapa with fried egg and garlic rice', 120, '', 1, 1, 1, 0),
 (5, 1, 'Pancit Canton', 'Stir-fried noodles with vegetables and meat', 65, '', 1, 0, 1, 1),
@@ -225,10 +225,28 @@ CREATE TABLE `stalls` (
 --
 
 INSERT INTO `stalls` (`stall_id`, `stall_name`, `owner_id`, `description`, `contact_number`, `image_url`, `image_banner_url`, `is_active`) VALUES
-(1, 'Boss Sisig!', 2, NULL, NULL, 'BossSisigProfile.jpg', 'BossSisigBanner.jpg', 1),
-(2, 'Ninong Ry’s Special Delicacy Stall', 3, NULL, NULL, 'NinongRySpecialDelicacy.jpg', 'NinongRySpecialDelicacyBanner.jpg', 1),
-(3, 'Mekus Mekus Tayo Insan!', 4, NULL, NULL, 'MekusMekusTayoInsan.jpg', 'MekusMekusTayoInsanBanner.jpeg', 1),
-(4, 'Masamsamit So Adele', 7, NULL, NULL, 'MasamsamitSoAdele.jpg', 'MasamsamitSoAdeleBanner.jpg', 1);
+(1, 'Boss Sisig!', 2, NULL, NULL, 'assets/stalls/profiles/1.jpg', 'assets/stalls/banners/BossSisigBanner.jpg', 1),
+(2, 'Ninong Ry’s Special Delicacy Stall', 3, NULL, NULL, 'assets/stalls/profiles/2.jpg', 'assets/stalls/banners/NinongRySpecialDelicacyBanner.jpg', 1),
+(3, 'Mekus Mekus Tayo Insan!', 4, NULL, NULL, 'assets/stalls/profiles/3.jpg', 'assets/stalls/banners/MekusMekusTayoInsanBanner.jpeg', 1),
+(4, 'Masamsamit So Adele', 7, NULL, NULL, 'assets/stalls/profiles/4.jpg', 'assets/stalls/banners/MasamsamitSoAdeleBanner.jpg', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `transactions`
+--
+
+CREATE TABLE `transactions` (
+  `transaction_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `transaction_type` enum('deposit','send','receive','refund','withdraw') NOT NULL,
+  `amount` int(11) NOT NULL,
+  `source_id` int(11) DEFAULT NULL,
+  `destination_id` int(11) DEFAULT NULL,
+  `transaction_date` timestamp NOT NULL DEFAULT current_timestamp(),
+  `status` enum('pending','completed','failed') DEFAULT 'pending',
+  `description` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -248,7 +266,8 @@ CREATE TABLE `trays` (
 --
 
 INSERT INTO `trays` (`tray_id`, `user_id`, `item_id`, `quantity`) VALUES
-(1, 1, 1, 2);
+(1, 1, 1, 2),
+(3, 1, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -327,6 +346,13 @@ ALTER TABLE `stalls`
   ADD PRIMARY KEY (`stall_id`);
 
 --
+-- Indexes for table `transactions`
+--
+ALTER TABLE `transactions`
+  ADD PRIMARY KEY (`transaction_id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
 -- Indexes for table `trays`
 --
 ALTER TABLE `trays`
@@ -381,16 +407,32 @@ ALTER TABLE `stalls`
   MODIFY `stall_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
+-- AUTO_INCREMENT for table `transactions`
+--
+ALTER TABLE `transactions`
+  MODIFY `transaction_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `trays`
 --
 ALTER TABLE `trays`
-  MODIFY `tray_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `tray_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
   MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `transactions`
+--
+ALTER TABLE `transactions`
+  ADD CONSTRAINT `transactions_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

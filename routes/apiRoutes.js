@@ -8,6 +8,7 @@ const orderController = require('../controllers/orderController');
 const orderItemsController = require('../controllers/orderItemsController');
 const bookmarkController = require('../controllers/bookmarkController');
 const categoryController = require('../controllers/categoryController');
+const transactionController = require('../controllers/transactionController');
 const foodItemCategoryController = require('../controllers/foodItemCategoryController');
 
 //Stalls
@@ -69,5 +70,11 @@ router.put('/categories/:id', categoryController.updateCategoryName);
 router.delete('/categories/:id', categoryController.deleteCategory);
 //Associate Categories in Food Items 
 router.post('/foods/:id/categories', foodItemCategoryController.addCategoriesToFoodItem);
+
+//Transactions
+router.get('/transactions', transactionController.getAllTransactions);
+router.get('/transactions/:id', transactionController.getTransactionByUserId);
+router.post('/transactions', transactionController.createTransaction);
+router.put('/transactions/:id', transactionController.updateTransactionStatus);
 
 module.exports = router;
