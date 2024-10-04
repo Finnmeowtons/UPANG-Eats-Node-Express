@@ -39,7 +39,7 @@ router.delete('/foods/:id', foodController.deleteFood);
 
 //Trays
 router.get('/trays', trayController.getAllTrays);
-router.get('/trays/:id', trayController.getTrayById);
+router.get('/trays/:id', trayController.getTrayByUserId);
 router.post('/trays', trayController.createTray);
 router.put('/trays/:id', trayController.updateTray);
 router.delete('/trays/:id', trayController.deleteTray);

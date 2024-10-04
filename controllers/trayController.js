@@ -13,17 +13,17 @@ exports.getAllTrays = async (req, res) => {
     }
 }
 
-exports.getTrayById = async (req, res) => {
+exports.getTrayByUserId = async (req, res) => {
     try {
-        const trayId = req.params.id;
-        const [results, fields] = await connection.query('SELECT * FROM trays WHERE tray_id = ?', [trayId]);
+        const userId = req.params.id;
+        const [results, fields] = await connection.query('SELECT * FROM trays WHERE user_id = ?', [userId]);
 
         if (results.length === 0) {
-            return res.status(404).json({ error: 'Tray not found' })
+            return res.status(404).json({ error: 'User not found' })
         }
 
-        const tray = new Tray(...Object.values(results[0]));
-        res.json(tray);
+        const trays = results.map(row => new Tray(...Object.values(row)));
+        res.json(trays);
     } catch (error) {
         console.error('Error fetching tray:', error);
         res.status(500).json({ error: 'Internal server error' });
