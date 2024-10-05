@@ -26,13 +26,19 @@ exports.getAllTrays = async (req, res) => {
 exports.getTrayByUserId = async (req, res) => {
     try {
         const userId = req.params.id;
-        const [results, fields] = await connection.query('SELECT * FROM trays WHERE user_id = ?', [userId]);
-
-        if (results.length === 0) {
-            return res.status(404).json({ error: 'User not found' })
-        }
-
-        const trays = results.map(row => new Tray(...Object.values(row)));
+        const [results, fields] = await connection.query(`
+            SELECT t.*, s.stall_name, f.item_name 
+            FROM trays t
+            JOIN food_items f ON t.item_id = f.item_id
+            JOIN stalls s ON f.stall_id = s.stall_id
+            WHERE user_id = ?
+            `, [userId]);
+        const trays = results.map(row => {
+            const tray = new Tray(...Object.values(row));
+            tray.stall_name = row.stall_name;
+            tray.item_name = row.item_name;
+            return tray;
+        });
         res.json(trays);
     } catch (error) {
         console.error('Error fetching tray:', error);
