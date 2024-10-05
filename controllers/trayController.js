@@ -3,8 +3,18 @@ const connection = require('../connection/connection');
 
 exports.getAllTrays = async (req, res) => {
     try {
-        const [results, fields] = await connection.query('SELECT * FROM trays');
-        const trays = results.map(row => new Tray(...Object.values(row)));
+        const [results, fields] = await connection.query(`
+            SELECT t.*, s.stall_name, f.item_name 
+            FROM trays t
+            JOIN food_items f ON t.item_id = f.item_id
+            JOIN stalls s ON f.stall_id = s.stall_id
+            `);
+        const trays = results.map(row => {
+            const tray = new Tray(...Object.values(row));
+            tray.stall_name = row.stall_name;
+            tray.item_name = row.item_name;
+            return tray;
+        });
 
         res.json(trays);
     } catch (error) {
