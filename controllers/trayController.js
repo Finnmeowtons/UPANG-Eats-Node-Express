@@ -50,6 +50,39 @@ exports.createTray = async (req, res) => {
     try {
         const { user_id, item_id, quantity } = req.body;
 
+        // 1. Get the stall_id of the new item
+        const [itemResult] = await connection.query('SELECT stall_id FROM food_items WHERE item_id = ?', [item_id]);
+        if (itemResult.length === 0) {
+            return res.status(404).json({ error: 'Item not found' });
+        }
+        const newItemStallId = itemResult[0].stall_id;
+
+        // 2. Check if there are existing items in the tray with a different stall_id
+        const [existingTrayResult] = await connection.query(`
+            SELECT tray_id
+            FROM trays
+            WHERE user_id = ?`, [user_id]);
+
+        if (existingTrayResult.length > 0) {
+            const existingTrayIds = existingTrayResult.map(row => row.tray_id); // Extract tray_ids
+
+            const [stallIdsResult] = await connection.query(`
+                SELECT DISTINCT stall_id
+                FROM food_items fi
+                JOIN trays t ON fi.item_id = t.item_id
+                WHERE t.tray_id IN (?)`, [existingTrayIds]);
+
+            if (stallIdsResult.length > 1 || (stallIdsResult.length === 1 && stallIdsResult[0].stall_id !== newItemStallId)) {
+                // There are items from multiple stalls or a single stall that's different from the new item
+                return res.status(409).json({ 
+                    message: 'Stall conflict', 
+                    trayIdsToDelete: existingTrayIds, // Send the list of tray_ids to delete
+                    newStallId: newItemStallId 
+                });
+            }
+        }
+
+        // 3. If no conflict, proceed with creating the tray item
         const [result, fields] = await connection.query(
             'INSERT INTO trays (user_id, item_id, quantity) VALUES (?,?,?)',
             [user_id, item_id, quantity]
