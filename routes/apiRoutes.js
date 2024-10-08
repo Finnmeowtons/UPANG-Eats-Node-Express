@@ -44,6 +44,7 @@ router.get('/trays/:id', trayController.getTrayByUserId);
 router.post('/trays', trayController.createTray);
 router.put('/trays/:id', trayController.updateTray);
 router.delete('/trays/:id', trayController.deleteTray);
+router.delete('/trays', trayController.deleteTrayIds);
 
 //Orders 
 router.get('/orders', orderController.getAllOrders);

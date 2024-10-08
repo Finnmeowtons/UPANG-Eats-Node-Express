@@ -1,5 +1,6 @@
 const Tray = require('../models/Tray');
 const connection = require('../connection/connection');
+const Stall = require('../models/Stall');
 
 exports.getAllTrays = async (req, res) => {
     try {
@@ -74,10 +75,10 @@ exports.createTray = async (req, res) => {
 
             if (stallIdsResult.length > 1 || (stallIdsResult.length === 1 && stallIdsResult[0].stall_id !== newItemStallId)) {
                 // There are items from multiple stalls or a single stall that's different from the new item
-                return res.status(409).json({ 
-                    message: 'Stall conflict', 
+                return res.status(409).json({
+                    message: 'Stall conflict',
                     trayIdsToDelete: existingTrayIds, // Send the list of tray_ids to delete
-                    newStallId: newItemStallId 
+                    newStallId: newItemStallId
                 });
             }
         }
@@ -87,13 +88,26 @@ exports.createTray = async (req, res) => {
             'INSERT INTO trays (user_id, item_id, quantity) VALUES (?,?,?)',
             [user_id, item_id, quantity]
         );
-        
+
         const newTrayId = result.insertId;
 
-        const [newTrayData] = await connection.query('SELECT * FROM trays WHERE tray_id = ?', [newTrayId]);
-        const newTray = new Tray(...Object.values(newTrayData[0]))
+         // 4. Get the stall_id of the newly added tray item
+         const [trayItemResult] = await connection.query(`
+            SELECT fi.stall_id 
+            FROM food_items fi
+            JOIN trays t ON fi.item_id = t.item_id
+            WHERE t.tray_id = ?`, 
+            [newTrayId]
+        );
+        const newTrayStallId = trayItemResult[0].stall_id;
 
-        res.status(201).json(newTray);
+        // 5. Get the stall details using the stall_id
+        const [stallResult] = await connection.query('SELECT * FROM stalls WHERE stall_id = ?', [newTrayStallId]);
+
+        const stall = new Stall(...Object.values(stallResult[0]));
+
+        // 6. Include the stall details in the response
+        res.status(201).json(stall);
     } catch (error) {
         console.error('Error fetching tray:', error);
         res.status(500).json({ error: 'Internal server error' });
@@ -111,7 +125,7 @@ exports.updateTray = async (req, res) => {
         );
 
         if (result.affectedRows === 0) {
-            return res.status(404).json({error: 'Tray not found'})
+            return res.status(404).json({ error: 'Tray not found' })
         }
 
         const [updatedTrayData] = await connection.query(
@@ -120,26 +134,53 @@ exports.updateTray = async (req, res) => {
         const updatedTray = new Tray(...Object.values(updatedTrayData[0]));
 
         res.json(updatedTray);
-    } catch(error) {
+    } catch (error) {
         console.error('Error fetching tray:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 }
 
 exports.deleteTray = async (req, res) => {
-    try{
+    try {
         const trayId = req.params.id;
 
         const [result, fields] = await connection.query('DELETE FROM trays WHERE tray_id = ?', trayId);
 
-        if (result.affectedRows === 0 ) {
-            return res.status(404).json({error: 'Tray not found'})
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Tray not found' })
         }
 
         //Status code 204 cant send messages on the json
         res.status(204).send()
     } catch (error) {
-        console.error('Error fetching tray:', error);
+        console.error('Error deleting tray:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
+
+exports.deleteTrayIds = async (req, res) => {
+    try {
+        const trayIdsToDelete = req.body;
+
+        if (!Array.isArray(trayIdsToDelete) || trayIdsToDelete.length === 0) {
+            return res.status(400).json({
+                error: 'Invalid request body. Expected an array of tray_ids.'
+            });
+        }
+
+        const [result] = await connection.query(`DELETE FROM trays WHERE tray_id IN (?)`, [trayIdsToDelete]);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({
+                error: 'No matching tray items found'
+            });
+        }
+
+        //Status code 204 cant send messages on the json
+        res.status(204).send()
+    } catch (error) {
+        console.error('Error deleting tray items:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 }
