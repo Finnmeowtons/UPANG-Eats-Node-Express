@@ -3,7 +3,7 @@ const connection = require("../connection/connection");
 
 exports.getAllOrders = async (req, res) => {
     try {
-        const [results, fields] = await connection.query('SELECT * FROM orders');
+        const [results, fields] = await connection.query(`SELECT * FROM orders`);
         const orders = results.map(row => new Order(...Object.values(row)));
 
         res.json(orders);
@@ -12,6 +12,59 @@ exports.getAllOrders = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 }
+
+exports.getOrdersForStall = async (req, res) => {
+    try {
+        const stallId = req.params.id;
+
+        // 1. Fetch orders for the stall
+        const [ordersResult] = await connection.query(`
+        SELECT o.*, u.first_name, u.last_name
+        FROM orders o
+        JOIN users u ON o.user_id = u.user_id 
+        WHERE o.stall_id = ?`,
+            [stallId]
+        );
+        console.log(ordersResult);
+
+        // 2. For each order, fetch its items and construct the receipt data
+        const receipts = await Promise.all(ordersResult.map(async (order) => {
+            const [orderItemsResult] = await connection.query(`
+            SELECT oi.*, fi.item_name, fi.image_url 
+            FROM order_items oi
+            JOIN food_items fi ON oi.item_id = fi.item_id
+            WHERE oi.order_id = ?`,
+                [order.order_id]
+            );
+
+            return {
+                order_id: order.order_id,
+                user_id: order.user_id,
+                stall_id: order.stall_id,
+                order_date: order.order_date,
+                total_amount: order.total_amount,
+                order_status: order.order_status,
+                customer_name: `${order.first_name} ${order.last_name}`,
+                items: orderItemsResult.map(item => ({
+                    item_name: item.item_name,
+                    quantity: item.quantity,
+                    subtotal: item.subtotal,
+                    image_url: item.image_url,
+                })),
+            };
+        }));
+        console.log(receipts);
+
+        res.json(receipts); // Send the array of receipts
+    } catch (error) {
+        console.error('Error fetching orders for stall:', error);
+        res.status(500).json({
+            error: 'Internal server error'
+        });
+    }
+};
+
+
 
 exports.getOrderById = async (req, res) => {
     try {
@@ -32,19 +85,38 @@ exports.getOrderById = async (req, res) => {
 
 exports.createOrder = async (req, res) => {
     try {
-        const { user_id, stall_id, total_amount } = req.body;
+        const { user_id, total_amount, items } = req.body;
 
-        const [result, fields] = await connection.query(
-            'INSERT INTO orders (user_id, stall_id, total_amount) VALUES (?,?,?)',
+        // 1. Get the stall_id from the first item (assuming all items are from the same stall)
+        const itemId = items[0].item_id; // Assuming items is not empty
+
+        const [rows] = await connection.query(
+            'SELECT stall_id FROM food_items WHERE item_id = ?',
+            [itemId]
+        );
+
+        if (rows.length === 0) {
+            throw new Error('Item not found');
+        }
+
+        const stall_id = rows[0].stall_id;
+
+        // 2. Create the order
+        const [orderResult] = await connection.query(
+            'INSERT INTO orders (user_id, stall_id, total_amount) VALUES (?, ?, ?)',
             [user_id, stall_id, total_amount]
         );
-        
-        const newOrderId = result.insertId;
+        const orderId = orderResult.insertId;
 
-        const [newOrderData] = await connection.query('SELECT * FROM orders WHERE order_id = ?', [newOrderId]);
-        const newOrder = new Order(...Object.values(newOrderData[0]))
+        // 3. Create order items
+        for (const item of items) {
+            await connection.query(
+                'INSERT INTO order_items (order_id, item_id, quantity, subtotal) VALUES (?, ?, ?, ?)',
+                [orderId, item.item_id, item.quantity, item.subtotal]
+            );
+        }
 
-        res.status(201).json(newOrder);
+        res.status(201).send();
     } catch (error) {
         console.error('Error fetching order:', error);
         res.status(500).json({ error: 'Internal server error' });
@@ -62,7 +134,7 @@ exports.updateOrderStatus = async (req, res) => {
         );
 
         if (result.affectedRows === 0) {
-            return res.status(404).json({error: 'Order not found'})
+            return res.status(404).json({ error: 'Order not found' })
         }
 
         const [updatedOrderData] = await connection.query(
@@ -71,20 +143,20 @@ exports.updateOrderStatus = async (req, res) => {
         const updatedOrder = new Order(...Object.values(updatedOrderData[0]));
 
         res.json(updatedOrder);
-    } catch(error) {
+    } catch (error) {
         console.error('Error fetching order:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 }
 
 exports.deleteOrder = async (req, res) => {
-    try{
+    try {
         const orderId = req.params.id;
 
         const [result, fields] = await connection.query('DELETE FROM orders WHERE order_id = ?', orderId);
 
-        if (result.affectedRows === 0 ) {
-            return res.status(404).json({error: 'Order not found'})
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Order not found' })
         }
 
         //Status code 204 cant send messages on the json

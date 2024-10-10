@@ -14,6 +14,7 @@ const foodItemCategoryController = require('../controllers/foodItemCategoryContr
 //Stalls
 router.get('/stalls', stallsController.getAllStalls);
 router.get('/stalls/:id', stallsController.getStallById);
+router.get('/stalls/:id/orders', orderController.getOrdersForStall);
 router.post('/stalls', stallsController.createStall);
 router.put('/stalls/:id', stallsController.updateStall);
 router.delete('/stalls/:id', stallsController.deleteStall);
