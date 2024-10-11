@@ -139,8 +139,10 @@ exports.loginUser = async (req, res) => {
         res.status(200).json({
             user_id: user.user_id,
             email: user.email,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            phone_number: user.phone_number,
             user_type: user.user_type,
-            message: userTypeResponse,
         });
     } catch (error) {
         console.error('Error logging in user:', error);

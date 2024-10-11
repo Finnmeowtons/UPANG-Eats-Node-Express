@@ -83,6 +83,60 @@ exports.getOrderById = async (req, res) => {
     }
 }
 
+
+exports.getOrderByUserId = async (req, res) => {
+    try {
+        const userId = req.params.id; // Changed orderId to userId
+
+        // 1. Fetch orders for the user
+        const [ordersResult] = await connection.query(`
+      SELECT o.*, u.first_name, u.last_name
+      FROM orders o
+      JOIN users u ON o.user_id = u.user_id
+      WHERE o.user_id = ?`,
+            [userId]
+        );
+
+        if (ordersResult.length === 0) {
+            return res.status(404).json({ error: 'No orders found for this user' });
+        }
+
+        // 2. For each order, fetch its items
+        const orders = await Promise.all(ordersResult.map(async (order) => {
+            const [orderItemsResult] = await connection.query(`
+        SELECT oi.*, fi.item_name, fi.image_url
+        FROM order_items oi
+        JOIN food_items fi ON oi.item_id = fi.item_id
+        WHERE oi.order_id = ?`,
+                [order.order_id]
+            );
+
+            return {
+                order_id: order.order_id,
+                user_id: order.user_id,
+                stall_id: order.stall_id,
+                order_date: order.order_date,
+                total_amount: order.total_amount,
+                order_status: order.order_status,
+                customer_name: `${order.first_name} ${order.last_name}`,
+                items: orderItemsResult.map(item => ({
+                    order_item_id: item.order_item_id,
+                    item_id: item.item_id,
+                    item_name: item.item_name,
+                    quantity: item.quantity,
+                    subtotal: item.subtotal,
+                    image_url: item.image_url,
+                })),
+            };
+        }));
+
+        res.json(orders);
+    } catch (error) {
+        console.error('Error fetching order:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
 exports.createOrder = async (req, res) => {
     try {
         const { user_id, total_amount, items } = req.body;
@@ -115,6 +169,9 @@ exports.createOrder = async (req, res) => {
                 [orderId, item.item_id, item.quantity, item.subtotal]
             );
         }
+
+        // 4. Delete the user's tray items
+        await connection.query('DELETE FROM trays WHERE user_id = ?', [user_id]);
 
         res.status(201).send();
     } catch (error) {

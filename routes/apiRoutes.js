@@ -50,6 +50,7 @@ router.delete('/trays', trayController.deleteTrayIds);
 //Orders 
 router.get('/orders', orderController.getAllOrders);
 router.get('/orders/:id', orderController.getOrderById);
+router.get('/users/:id/orders', orderController.getOrderByUserId);
 router.post('/orders', orderController.createOrder);
 router.put('/orders/:id', orderController.updateOrderStatus);
 router.delete('/orders/:id', orderController.deleteOrder);
