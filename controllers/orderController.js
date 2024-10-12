@@ -46,6 +46,8 @@ exports.getOrdersForStall = async (req, res) => {
                 order_status: order.order_status,
                 customer_name: `${order.first_name} ${order.last_name}`,
                 items: orderItemsResult.map(item => ({
+                    order_item_id: item.order_item_id,
+                    item_id: item.item_id,
                     item_name: item.item_name,
                     quantity: item.quantity,
                     subtotal: item.subtotal,

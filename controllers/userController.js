@@ -136,14 +136,24 @@ exports.loginUser = async (req, res) => {
         }
 
         // success
-        res.status(200).json({
+        const response = {
             user_id: user.user_id,
             email: user.email,
             first_name: user.first_name,
             last_name: user.last_name,
             phone_number: user.phone_number,
             user_type: user.user_type,
-        });
+        };
+
+        if (user.user_type === 'stall_owner') {
+            const [stallResult] = await connection.query('SELECT stall_id, stall_name FROM stalls WHERE owner_id = ?', [user.user_id]);
+            if (stallResult.length > 0) {
+                response.stall_id = stallResult[0].stall_id;
+                response.stall_name = stallResult[0].stall_name; // Add stall_name to response
+            }
+        }
+        console.log(response);
+        res.status(200).json(response);
     } catch (error) {
         console.error('Error logging in user:', error);
         res.status(500).json({ error: 'Internal server error' });
