@@ -7,6 +7,7 @@ exports.getAllFoods = async (req, res) => {
             SELECT f.*, s.stall_name
             FROM food_items f
             JOIN stalls s ON f.stall_id = s.stall_id
+            WHERE f.is_available = 1
             `);
         const foods = results.map(row => {
             const food = new Food(...Object.values(row));
@@ -30,7 +31,7 @@ exports.getFoodsByCategory = async (req, res) => {
             FROM food_items f
             JOIN food_item_categories fic ON f.item_id = fic.food_item_id
             JOIN stalls s ON f.stall_id = s.stall_id
-            WHERE fic.category_id = ?`,
+            WHERE fic.category_id = ? AND f.is_available = 1`,
             [categoryId]
         );
         const foods = results.map(row => {
@@ -106,7 +107,7 @@ exports.getFoodsByStallId = async (req, res) => {
             SELECT f.*
             FROM food_items f
             JOIN stalls s ON f.stall_id = s.stall_id
-            WHERE s.stall_id = ?`,
+            WHERE s.stall_id = ? AND f.is_available = 1`,
             [stallId]
         );
         const foods = results.map(row => new Food(...Object.values(row)));
