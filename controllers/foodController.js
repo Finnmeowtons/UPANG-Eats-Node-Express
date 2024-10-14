@@ -107,7 +107,7 @@ exports.getFoodsByStallId = async (req, res) => {
             SELECT f.*
             FROM food_items f
             JOIN stalls s ON f.stall_id = s.stall_id
-            WHERE s.stall_id = ? AND f.is_available = 1`,
+            WHERE s.stall_id = ?`,
             [stallId]
         );
         const foods = results.map(row => new Food(...Object.values(row)));
