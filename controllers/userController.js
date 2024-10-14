@@ -31,6 +31,18 @@ exports.getUserById = async (req, res) => {
     }
 }
 
+exports.getTotalUsers = async (req, res) => {
+    try {
+        const [results] = await connection.query('SELECT COUNT(*) AS totalUsers FROM users');
+        const totalUsers = results[0].totalUsers;
+        res.json({ totalUsers });
+    } catch (error) {
+        console.error('Error fetching total users:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+
 exports.createUser = async (req, res) => {
     try {
         const { student_id, first_name, last_name, email, password, phone_number, user_type } = req.body;

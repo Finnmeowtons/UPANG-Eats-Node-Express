@@ -18,13 +18,16 @@ router.get('/stalls/:id/orders', orderController.getOrdersForStall);
 router.post('/stalls', stallsController.createStall);
 router.put('/stalls/:id', stallsController.updateStall);
 router.delete('/stalls/:id', stallsController.deleteStall);
+router.get('/total-stalls', stallsController.getTotalStalls);
+router.get('/active-stalls', stallsController.getActiveStalls);
 
 //Users
 router.get('/users', userController.getAllUsers);
 router.get('/users/:id', userController.getUserById);
-router.post('/users', userController.createUser); //palitan sana ng create naka /users kase
+router.post('/users', userController.createUser);
 router.put('/users/:id', userController.updateUser);
 router.delete('/users/:id', userController.deleteUser);
+router.get('/total-users', userController.getTotalUsers);
 
 //Login
 router.post('/login', userController.loginUser);
