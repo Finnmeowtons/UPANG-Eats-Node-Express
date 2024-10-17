@@ -126,7 +126,7 @@ exports.updateFood = async (req, res) => {
         );
 
         if (result.affectedRows === 0) {
-            return res.status(404).json({error: 'Food not found'})
+            return res.status(404).json({ error: 'Food not found' })
         }
 
         const [updatedFoodData] = await connection.query(
@@ -135,20 +135,20 @@ exports.updateFood = async (req, res) => {
         const updatedFood = new Food(...Object.values(updatedFoodData[0]));
 
         res.json(updatedFood);
-    } catch(error) {
+    } catch (error) {
         console.error('Error fetching food:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 }
 
 exports.deleteFood = async (req, res) => {
-    try{
+    try {
         const foodId = req.params.id;
 
         const [result, fields] = await connection.query('DELETE FROM food_items WHERE item_id = ?', foodId);
 
-        if (result.affectedRows === 0 ) {
-            return res.status(404).json({error: 'Food not found'})
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Food not found' })
         }
 
         //Status code 204 cant send messages on the json
@@ -158,3 +158,33 @@ exports.deleteFood = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 }
+
+exports.getFoodAnalytics = async (req, res) => {
+    try {
+        const stallId = req.params.id;
+        const { start_date, end_date } = req.body;
+        if (!start_date || !end_date) {
+            return res.status(400).json({ error: 'Missing start_date or end_date' });
+        }
+        console.log("stall Id", stallId);
+        console.log("start date", start_date);
+        console.log("end date", end_date);
+        const [results] = await connection.query(`
+            SELECT fi.item_name, SUM(oi.quantity) AS total_quantity_sold
+            FROM order_items oi
+            JOIN orders o ON oi.order_id = o.order_id
+            JOIN food_items fi ON oi.item_id = fi.item_id
+            WHERE o.stall_id = ? AND o.order_date BETWEEN ? AND ?
+            GROUP BY fi.item_id
+        `, [stallId, start_date, end_date]);
+
+        const analytics = results.map(row => ({
+            item_name: row.item_name,
+            total_quantity_sold: row.total_quantity_sold,
+        }));
+        res.json(analytics);
+    } catch (error) {
+        console.error('Error fetching food analytics:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
