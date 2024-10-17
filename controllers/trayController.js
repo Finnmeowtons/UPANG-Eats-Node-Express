@@ -1,6 +1,7 @@
 const Tray = require('../models/Tray');
 const connection = require('../connection/connection');
 const Stall = require('../models/Stall');
+const Food = require('../models/Food');
 
 exports.getAllTrays = async (req, res) => {
     try {
@@ -43,6 +44,33 @@ exports.getTrayByUserId = async (req, res) => {
         res.json(trays);
     } catch (error) {
         console.error('Error fetching tray:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
+exports.getTrayFoodsByUserId = async (req, res) => {
+    const userId = req.params.id;
+
+    try {
+        const [results, fields] = await connection.query(`
+            SELECT f.*, s.stall_name, t.tray_id, t.quantity
+            FROM food_items f
+            JOIN stalls s ON f.stall_id = s.stall_id
+            JOIN trays t ON f.item_id = t.item_id
+            WHERE t.user_id = ?`,
+            [userId]
+        );
+        const foods = results.map(row => {
+            const food = new Food(...Object.values(row));
+            food.stall_name = row.stall_name;
+            food.tray_id = row.tray_id;
+            food.quantity = row.quantity;
+            return food;
+        });
+
+        res.json(foods);
+    } catch (error) {
+        console.error('Error fetching foods:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 }

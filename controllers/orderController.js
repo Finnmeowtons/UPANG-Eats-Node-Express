@@ -212,16 +212,27 @@ exports.deleteOrder = async (req, res) => {
     try {
         const orderId = req.params.id;
 
-        const [result, fields] = await connection.query('DELETE FROM orders WHERE order_id = ?', orderId);
-
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ error: 'Order not found' })
+        const [orderResult] = await connection.query('SELECT order_status FROM orders WHERE order_id = ?', [orderId]);
+        if (orderResult.length === 0) {
+            return res.status(404).json({ error: 'Order not found' });
         }
 
-        //Status code 204 cant send messages on the json
-        res.status(204).send()
+        if (orderResult[0].order_status !== 'pending') {
+            return res.status(400).json({ 
+                error: 'Cannot delete order', 
+                message: 'The order is accepted and is currently being processed.' 
+            });
+        }
+
+        const [result, fields] = await connection.query('DELETE FROM orders WHERE order_id = ?', [orderId]);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Order not found' });
+        }
+
+        res.status(204).send();
     } catch (error) {
-        console.error('Error fetching order:', error);
+        console.error('Error deleting order:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
-}
+};

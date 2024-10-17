@@ -47,32 +47,7 @@ exports.getFoodsByCategory = async (req, res) => {
     }
 }
 
-exports.getTrayFoodsByUserId = async (req, res) => {
-    const userId = req.params.id;
 
-    try {
-        const [results, fields] = await connection.query(`
-            SELECT f.*, s.stall_name, t.tray_id, t.quantity
-            FROM food_items f
-            JOIN stalls s ON f.stall_id = s.stall_id
-            JOIN trays t ON f.item_id = t.item_id
-            WHERE t.user_id = ?`,
-            [userId]
-        );
-        const foods = results.map(row => {
-            const food = new Food(...Object.values(row));
-            food.stall_name = row.stall_name;
-            food.tray_id = row.tray_id;
-            food.quantity = row.quantity;
-            return food;
-        });
-
-        res.json(foods);
-    } catch (error) {
-        console.error('Error fetching foods:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-}
 
 exports.getFoodById = async (req, res) => {
     try {
@@ -107,7 +82,7 @@ exports.getFoodsByStallId = async (req, res) => {
             SELECT f.*
             FROM food_items f
             JOIN stalls s ON f.stall_id = s.stall_id
-            WHERE s.stall_id = ? AND f.is_available = 1`,
+            WHERE s.stall_id = ?    `,
             [stallId]
         );
         const foods = results.map(row => new Food(...Object.values(row)));
@@ -183,3 +158,35 @@ exports.deleteFood = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 }
+
+exports.getFoodAnalytics = async (req, res) => {
+    try {
+        const stallId = req.params.id;
+        const { start_date, end_date } = req.body;
+
+        if (!start_date || !end_date) {
+            return res.status(400).json({ error: 'Missing start_date or end_date' });
+        }
+console.log("stall Id", stallId);
+console.log("start date", start_date);
+console.log("end date", end_date);
+        const [results] = await connection.query(`
+            SELECT fi.item_name, SUM(oi.quantity) AS total_quantity_sold
+            FROM order_items oi
+            JOIN orders o ON oi.order_id = o.order_id
+            JOIN food_items fi ON oi.item_id = fi.item_id
+            WHERE o.stall_id = ? AND o.order_date BETWEEN ? AND ?
+            GROUP BY fi.item_id
+        `, [stallId, start_date, end_date]);
+            
+        const analytics = results.map(row => ({
+            item_name: row.item_name,
+            total_quantity_sold: row.total_quantity_sold,
+        }));
+
+        res.json(analytics);
+    } catch (error) {
+        console.error('Error fetching food analytics:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
