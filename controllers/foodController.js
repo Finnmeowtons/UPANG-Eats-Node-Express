@@ -82,7 +82,7 @@ exports.getFoodsByStallId = async (req, res) => {
             SELECT f.*
             FROM food_items f
             JOIN stalls s ON f.stall_id = s.stall_id
-            WHERE s.stall_id = ?    `,
+            WHERE s.stall_id = ?`,
             [stallId]
         );
         const foods = results.map(row => new Food(...Object.values(row)));
@@ -158,35 +158,3 @@ exports.deleteFood = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 }
-
-exports.getFoodAnalytics = async (req, res) => {
-    try {
-        const stallId = req.params.id;
-        const { start_date, end_date } = req.body;
-
-        if (!start_date || !end_date) {
-            return res.status(400).json({ error: 'Missing start_date or end_date' });
-        }
-console.log("stall Id", stallId);
-console.log("start date", start_date);
-console.log("end date", end_date);
-        const [results] = await connection.query(`
-            SELECT fi.item_name, SUM(oi.quantity) AS total_quantity_sold
-            FROM order_items oi
-            JOIN orders o ON oi.order_id = o.order_id
-            JOIN food_items fi ON oi.item_id = fi.item_id
-            WHERE o.stall_id = ? AND o.order_date BETWEEN ? AND ?
-            GROUP BY fi.item_id
-        `, [stallId, start_date, end_date]);
-            
-        const analytics = results.map(row => ({
-            item_name: row.item_name,
-            total_quantity_sold: row.total_quantity_sold,
-        }));
-
-        res.json(analytics);
-    } catch (error) {
-        console.error('Error fetching food analytics:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-};
