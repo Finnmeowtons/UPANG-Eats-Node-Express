@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 13, 2024 at 09:00 AM
+-- Generation Time: Oct 18, 2024 at 05:43 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.12
 
@@ -178,12 +178,15 @@ CREATE TABLE `orders` (
 
 INSERT INTO `orders` (`order_id`, `user_id`, `stall_id`, `order_date`, `total_amount`, `order_status`) VALUES
 (2, 2, 1, '2024-09-21 18:15:49', 123, 'ready'),
-(3, 2, 1, '2024-10-10 19:48:34', 340, 'ready'),
-(5, 2, 1, '2024-10-10 19:49:56', 340, 'accepted'),
-(16, 1, 1, '2024-10-10 21:23:28', 50, 'pending'),
+(3, 2, 1, '2024-10-10 19:48:34', 340, 'completed'),
+(5, 2, 1, '2024-10-10 19:49:56', 340, 'cancelled'),
 (32, 1, 1, '2024-10-11 14:06:40', 445, 'accepted'),
-(34, 10, 1, '2024-10-11 18:17:11', 345, 'ready'),
-(35, 10, 1, '2024-10-12 16:46:58', 50, 'accepted');
+(36, 10, 2, '2024-10-13 16:25:39', 85, 'completed'),
+(43, 10, 1, '2024-10-13 18:38:20', 65, 'cancelled'),
+(52, 10, 3, '2024-10-18 09:47:30', 285, 'accepted'),
+(53, 10, 3, '2024-10-18 09:51:16', 475, 'accepted'),
+(55, 10, 4, '2024-10-18 14:36:02', 420, 'pending'),
+(56, 10, 1, '2024-10-18 14:48:02', 1300, 'pending');
 
 -- --------------------------------------------------------
 
@@ -300,7 +303,31 @@ INSERT INTO `order_items` (`order_item_id`, `order_id`, `item_id`, `quantity`, `
 (96, 34, 4, 1, 120),
 (97, 34, 5, 1, 65),
 (98, 34, 6, 1, 35),
-(99, 35, 2, 1, 50);
+(99, 35, 2, 1, 50),
+(100, 36, 8, 1, 85),
+(101, 37, 19, 1, 130),
+(102, 38, 19, 1, 130),
+(103, 39, 11, 1, 35),
+(104, 40, 3, 1, 75),
+(105, 41, 36, 1, 30),
+(106, 42, 5, 1, 65),
+(107, 43, 5, 1, 65),
+(108, 44, 4, 1, 120),
+(109, 45, 14, 4, 380),
+(110, 45, 15, 3, 210),
+(111, 46, 7, 1, 20),
+(112, 47, 18, 3, 315),
+(113, 47, 21, 5, 200),
+(114, 48, 4, 4, 480),
+(115, 49, 12, 1, 25),
+(116, 50, 15, 3, 210),
+(117, 51, 20, 4, 100),
+(118, 52, 14, 3, 285),
+(119, 53, 14, 5, 475),
+(120, 54, 18, 1, 105),
+(121, 55, 18, 4, 420),
+(122, 56, 5, 20, 1300),
+(123, 57, 7, 5, 100);
 
 -- --------------------------------------------------------
 
@@ -327,7 +354,7 @@ INSERT INTO `stalls` (`stall_id`, `stall_name`, `owner_id`, `description`, `cont
 (1, 'Boss Sisig!', 12, NULL, NULL, 'assets/stalls/profiles/1.jpg', 'assets/stalls/banners/BossSisigBanner.jpg', 1),
 (2, 'Ninong Ry’s Special Delicacy Stall', 3, NULL, NULL, 'assets/stalls/profiles/2.jpg', 'assets/stalls/banners/NinongRySpecialDelicacyBanner.jpg', 1),
 (3, 'Mekus Mekus Tayo Insan!', 4, NULL, NULL, 'assets/stalls/profiles/3.jpg', 'assets/stalls/banners/MekusMekusTayoInsanBanner.jpeg', 1),
-(4, 'Masamsamit So Adele', 7, NULL, NULL, 'assets/stalls/profiles/4.jpg', 'assets/stalls/banners/MasamsamitSoAdeleBanner.jpg', 1);
+(4, 'Masamsamit Dito, Adele!', 7, NULL, NULL, 'assets/stalls/profiles/4.jpg', 'assets/stalls/banners/MasamsamitSoAdeleBanner.jpg', 1);
 
 -- --------------------------------------------------------
 
@@ -366,8 +393,7 @@ CREATE TABLE `trays` (
 
 INSERT INTO `trays` (`tray_id`, `user_id`, `item_id`, `quantity`) VALUES
 (4, 2, 6, 2),
-(130, 1, 2, 1),
-(137, 10, 2, 1);
+(130, 1, 2, 1);
 
 -- --------------------------------------------------------
 
@@ -494,13 +520,13 @@ ALTER TABLE `food_items`
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
 
 --
 -- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `order_item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=100;
+  MODIFY `order_item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=124;
 
 --
 -- AUTO_INCREMENT for table `stalls`
@@ -518,7 +544,7 @@ ALTER TABLE `transactions`
 -- AUTO_INCREMENT for table `trays`
 --
 ALTER TABLE `trays`
-  MODIFY `tray_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=138;
+  MODIFY `tray_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=240;
 
 --
 -- AUTO_INCREMENT for table `users`
