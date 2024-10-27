@@ -1,4 +1,5 @@
 const Order = require("../models/Order");
+const Notification = require("../models/Notification");
 const connection = require("../connection/connection");
 
 exports.getAllOrders = async (req, res) => {
@@ -200,6 +201,22 @@ exports.updateOrderStatus = async (req, res) => {
             'SELECT * FROM orders WHERE order_id = ?', [orderId]
         )
         const updatedOrder = new Order(...Object.values(updatedOrderData[0]));
+
+        let message;
+        if (order_status === 'accepted') {
+            message = `Your order #${orderId} has been accepted.`;
+        } else if (order_status === 'ready') {
+            message = `Your order #${orderId} is ready for pickup.`;
+        } else if (order_status === 'cancelled') {
+            message = `Your order #${orderId} has been cancelled.`;
+        } else {
+            message = `Your order #${orderId} status is now: ${order_status}.`;
+        }
+
+        await connection.query(
+            'INSERT INTO notifications (user_id, order_id, message) VALUES (?, ?, ?)',
+            [updatedOrder.user_id, orderId, message]
+        );
 
         res.json(updatedOrder);
     } catch (error) {

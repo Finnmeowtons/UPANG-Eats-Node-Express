@@ -10,6 +10,7 @@ const bookmarkController = require('../controllers/bookmarkController');
 const categoryController = require('../controllers/categoryController');
 const transactionController = require('../controllers/transactionController');
 const foodItemCategoryController = require('../controllers/foodItemCategoryController');
+const notificationController = require('../controllers/notificationController');
 
 //Stalls
 router.get('/stalls', stallsController.getAllStalls);
@@ -58,6 +59,11 @@ router.get('/users/:id/orders', orderController.getOrderByUserId);
 router.post('/orders', orderController.createOrder);
 router.put('/orders/:id', orderController.updateOrderStatus);
 router.delete('/orders/:id', orderController.deleteOrder);
+
+//Notifications
+router.get('/notifications/users/:id', notificationController.getNotificationByUser);
+router.put('/notifications/:id', notificationController.updateNotificationRead);
+router.delete('/notifications/:id', notificationController.deleteNotification);
 
 //Order_items (one to many relationship)
 router.get('/all-order-items', orderItemsController.getAllOrderItems);
