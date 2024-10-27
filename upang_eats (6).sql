@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 18, 2024 at 05:43 PM
+-- Generation Time: Oct 18, 2024 at 07:03 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.12
 
@@ -98,27 +98,27 @@ CREATE TABLE `food_items` (
 --
 
 INSERT INTO `food_items` (`item_id`, `stall_id`, `item_name`, `description`, `price`, `image_url`, `is_available`, `is_breakfast`, `is_lunch`, `is_merienda`) VALUES
-(2, 1, 'Lumpiang Shanghai', 'Cheese ng tatay mo', 50, '', 0, 0, 0, 0),
-(3, 1, 'Chicken Burger', 'Chicken patty in a soft bun with lettuce and mayo', 75, '', 1, 0, 1, 0),
-(4, 1, 'Tapsilog', 'Beef tapa with fried egg and garlic rice', 120, '', 1, 1, 1, 0),
-(5, 1, 'Pancit Canton', 'Stir-fried noodles with vegetables and meat', 65, '', 1, 0, 1, 1),
-(6, 1, 'Siomai', 'Steamed pork dumplings served with soy sauce', 45, '', 0, 0, 0, 0),
-(7, 2, 'Turon', 'Banana wrapped in spring roll wrapper and fried', 20, '', 1, 0, 0, 1),
-(8, 2, 'Cheeseburger', 'Juicy beef patty with cheese in a bun', 85, '', 1, 0, 1, 0),
-(9, 2, 'Adobo Rice Meal', 'Savory chicken adobo with rice', 110, '', 1, 1, 1, 0),
-(10, 2, 'Buko Juice', 'Fresh coconut juice', 30, '', 1, 0, 1, 1),
-(11, 2, 'Kikiam', 'Deep-fried pork sausage served with sauce', 35, '', 1, 0, 1, 1),
-(12, 3, 'Banana Cue', 'Caramelized bananas on a stick', 25, '', 1, 0, 0, 1),
-(13, 3, 'Double Burger', 'Double beef patty with cheese and bacon', 120, '', 1, 0, 1, 0),
-(14, 3, 'Longsilog', 'Sweet longganisa with fried egg and garlic rice', 95, '', 1, 1, 1, 0),
-(15, 3, 'Mami Noodles', 'Hot beef noodle soup', 70, '', 1, 0, 1, 1),
-(16, 3, 'French Fries', 'Crispy potato fries', 45, '', 1, 0, 1, 1),
-(17, 4, 'Puto', 'Steamed rice cakes', 15, '', 1, 0, 0, 1),
-(18, 4, 'Bacon Cheeseburger', 'Beef patty with bacon and cheese', 105, '', 1, 0, 1, 0),
-(19, 4, 'Lechon Kawali Meal', 'Crispy fried pork belly with rice', 130, '', 1, 1, 1, 0),
-(20, 4, 'Sago’t Gulaman', 'Sweet tapioca pearls and gelatin drink', 25, '', 1, 0, 1, 1),
-(21, 4, 'Siopao', 'Steamed bun with pork filling', 40, '', 1, 0, 1, 1),
-(36, 1, 'Milo', 'Energy Gap', 30, '', 0, 0, 0, 1);
+(2, 1, 'Lumpiang Shanghai', 'Cheese ng tatay mo', 50, '1_2', 1, 0, 0, 0),
+(3, 1, 'Chicken Burger', 'Chicken patty in a soft bun with lettuce and mayo', 75, '1_3', 1, 0, 1, 0),
+(4, 1, 'Tapsilog', 'Beef tapa with fried egg and garlic rice', 120, '1_4', 1, 1, 1, 0),
+(5, 1, 'Pancit Canton', 'Stir-fried noodles with vegetables and meat', 65, '1_5', 1, 0, 1, 1),
+(6, 1, 'Siomai', 'Steamed pork dumplings served with soy sauce', 45, '1_6', 1, 0, 0, 0),
+(7, 2, 'Turon', 'Banana wrapped in spring roll wrapper and fried', 20, '2_7', 1, 0, 0, 1),
+(8, 2, 'Cheeseburger', 'Juicy beef patty with cheese in a bun', 85, '2_8', 1, 0, 1, 0),
+(9, 2, 'Adobo Rice Meal', 'Savory chicken adobo with rice', 110, '2_9', 1, 1, 1, 0),
+(10, 2, 'Buko Juice', 'Fresh coconut juice', 30, '2_10', 1, 0, 1, 1),
+(11, 2, 'Kikiam', 'Deep-fried pork sausage served with sauce', 35, '2_11', 1, 0, 1, 1),
+(12, 3, 'Banana Cue', 'Caramelized bananas on a stick', 25, '3_12', 1, 0, 0, 1),
+(13, 3, 'Double Burger', 'Double beef patty with cheese and bacon', 120, '3_13', 1, 0, 1, 0),
+(14, 3, 'Longsilog', 'Sweet longganisa with fried egg and garlic rice', 95, '3_14', 1, 1, 1, 0),
+(15, 3, 'Mami Noodles', 'Hot beef noodle soup', 70, '3_15', 1, 0, 1, 1),
+(16, 3, 'French Fries', 'Crispy potato fries', 45, '3_16', 1, 0, 1, 1),
+(17, 4, 'Puto', 'Steamed rice cakes', 15, '4_17', 1, 0, 0, 1),
+(18, 4, 'Bacon Cheeseburger', 'Beef patty with bacon and cheese', 105, '4_18', 1, 0, 1, 0),
+(19, 4, 'Lechon Kawali Meal', 'Crispy fried pork belly with rice', 130, '4_19', 1, 1, 1, 0),
+(20, 4, 'Sago’t Gulaman', 'Sweet tapioca pearls and gelatin drink', 25, '4_20', 1, 0, 1, 1),
+(21, 4, 'Siopao', 'Steamed bun with pork filling', 40, '4_21', 1, 0, 1, 1),
+(36, 1, 'Milo', 'Energy Gap. Gerald Anderson', 30, '', 1, 0, 0, 1);
 
 -- --------------------------------------------------------
 
@@ -351,10 +351,10 @@ CREATE TABLE `stalls` (
 --
 
 INSERT INTO `stalls` (`stall_id`, `stall_name`, `owner_id`, `description`, `contact_number`, `image_url`, `image_banner_url`, `is_active`) VALUES
-(1, 'Boss Sisig!', 12, NULL, NULL, 'assets/stalls/profiles/1.jpg', 'assets/stalls/banners/BossSisigBanner.jpg', 1),
-(2, 'Ninong Ry’s Special Delicacy Stall', 3, NULL, NULL, 'assets/stalls/profiles/2.jpg', 'assets/stalls/banners/NinongRySpecialDelicacyBanner.jpg', 1),
-(3, 'Mekus Mekus Tayo Insan!', 4, NULL, NULL, 'assets/stalls/profiles/3.jpg', 'assets/stalls/banners/MekusMekusTayoInsanBanner.jpeg', 1),
-(4, 'Masamsamit Dito, Adele!', 7, NULL, NULL, 'assets/stalls/profiles/4.jpg', 'assets/stalls/banners/MasamsamitSoAdeleBanner.jpg', 1);
+(1, 'Boss Sisig!', 12, NULL, NULL, 'profile_1', 'banner_1', 1),
+(2, 'Ninong Ry’s Special Delicacy Stall', 3, NULL, NULL, 'profile_2', 'banner_2', 1),
+(3, 'Mekus Mekus Tayo Insan!', 4, NULL, NULL, 'profile_4', 'banner_3', 1),
+(4, 'Masamsamit Dito, Adele!', 7, NULL, NULL, 'profile_4', 'banner_4', 1);
 
 -- --------------------------------------------------------
 
@@ -393,7 +393,8 @@ CREATE TABLE `trays` (
 
 INSERT INTO `trays` (`tray_id`, `user_id`, `item_id`, `quantity`) VALUES
 (4, 2, 6, 2),
-(130, 1, 2, 1);
+(130, 1, 2, 1),
+(240, 10, 8, 1);
 
 -- --------------------------------------------------------
 
@@ -544,7 +545,7 @@ ALTER TABLE `transactions`
 -- AUTO_INCREMENT for table `trays`
 --
 ALTER TABLE `trays`
-  MODIFY `tray_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=240;
+  MODIFY `tray_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=241;
 
 --
 -- AUTO_INCREMENT for table `users`
