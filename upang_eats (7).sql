@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 18, 2024 at 07:03 PM
+-- Generation Time: Oct 27, 2024 at 04:18 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.12
 
@@ -160,6 +160,31 @@ INSERT INTO `food_item_categories` (`food_item_id`, `category_id`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `notifications`
+--
+
+CREATE TABLE `notifications` (
+  `notification_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `order_id` int(11) NOT NULL,
+  `message` varchar(255) NOT NULL,
+  `status` enum('unread','read') DEFAULT 'unread',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `is_delete` tinyint(1) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `notifications`
+--
+
+INSERT INTO `notifications` (`notification_id`, `user_id`, `order_id`, `message`, `status`, `created_at`, `is_delete`) VALUES
+(1, 10, 61, 'Your order is accepted', 'read', '2024-10-27 10:27:31', 0),
+(2, 10, 64, 'Your order #1264 has been accepted.', 'read', '2024-10-27 10:37:42', 0),
+(3, 10, 64, 'Your order #64 is ready for pickup.', 'read', '2024-10-27 14:16:35', 0);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `orders`
 --
 
@@ -177,16 +202,24 @@ CREATE TABLE `orders` (
 --
 
 INSERT INTO `orders` (`order_id`, `user_id`, `stall_id`, `order_date`, `total_amount`, `order_status`) VALUES
-(2, 2, 1, '2024-09-21 18:15:49', 123, 'ready'),
+(2, 2, 1, '2024-09-21 18:15:49', 123, 'completed'),
 (3, 2, 1, '2024-10-10 19:48:34', 340, 'completed'),
 (5, 2, 1, '2024-10-10 19:49:56', 340, 'cancelled'),
-(32, 1, 1, '2024-10-11 14:06:40', 445, 'accepted'),
+(32, 1, 1, '2024-10-11 14:06:40', 445, 'completed'),
 (36, 10, 2, '2024-10-13 16:25:39', 85, 'completed'),
 (43, 10, 1, '2024-10-13 18:38:20', 65, 'cancelled'),
 (52, 10, 3, '2024-10-18 09:47:30', 285, 'accepted'),
 (53, 10, 3, '2024-10-18 09:51:16', 475, 'accepted'),
-(55, 10, 4, '2024-10-18 14:36:02', 420, 'pending'),
-(56, 10, 1, '2024-10-18 14:48:02', 1300, 'pending');
+(55, 10, 4, '2024-10-18 14:36:02', 420, 'completed'),
+(56, 10, 1, '2024-10-18 14:48:02', 1300, 'completed'),
+(58, 10, 2, '2024-10-21 19:22:39', 85, 'completed'),
+(59, 10, 1, '2024-10-21 19:25:27', 600, 'completed'),
+(60, 10, 2, '2024-10-21 19:27:37', 35, 'completed'),
+(61, 10, 4, '2024-10-21 19:31:52', 2100, 'accepted'),
+(62, 10, 2, '2024-10-21 20:45:42', 35, 'pending'),
+(63, 10, 1, '2024-10-21 20:46:30', 30, 'completed'),
+(64, 10, 1, '2024-10-27 10:37:23', 150, 'ready'),
+(65, 10, 2, '2024-10-27 14:16:01', 440, 'pending');
 
 -- --------------------------------------------------------
 
@@ -327,7 +360,15 @@ INSERT INTO `order_items` (`order_item_id`, `order_id`, `item_id`, `quantity`, `
 (120, 54, 18, 1, 105),
 (121, 55, 18, 4, 420),
 (122, 56, 5, 20, 1300),
-(123, 57, 7, 5, 100);
+(123, 57, 7, 5, 100),
+(124, 58, 8, 1, 85),
+(125, 59, 4, 5, 600),
+(126, 60, 11, 1, 35),
+(127, 61, 18, 20, 2100),
+(128, 62, 11, 1, 35),
+(129, 63, 36, 1, 30),
+(130, 64, 36, 5, 150),
+(131, 65, 9, 4, 440);
 
 -- --------------------------------------------------------
 
@@ -374,6 +415,14 @@ CREATE TABLE `transactions` (
   `description` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `transactions`
+--
+
+INSERT INTO `transactions` (`transaction_id`, `user_id`, `transaction_type`, `amount`, `source_id`, `destination_id`, `transaction_date`, `status`, `description`) VALUES
+(1, 10, 'send', 500, 10, 12, '2024-10-22 19:00:18', 'completed', NULL),
+(2, 12, 'receive', 10, 10, 12, '2024-10-21 19:01:47', 'completed', NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -394,7 +443,7 @@ CREATE TABLE `trays` (
 INSERT INTO `trays` (`tray_id`, `user_id`, `item_id`, `quantity`) VALUES
 (4, 2, 6, 2),
 (130, 1, 2, 1),
-(240, 10, 8, 1);
+(249, 10, 4, 9);
 
 -- --------------------------------------------------------
 
@@ -455,6 +504,14 @@ ALTER TABLE `food_items`
 --
 ALTER TABLE `food_item_categories`
   ADD PRIMARY KEY (`food_item_id`,`category_id`);
+
+--
+-- Indexes for table `notifications`
+--
+ALTER TABLE `notifications`
+  ADD PRIMARY KEY (`notification_id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `order_id` (`order_id`);
 
 --
 -- Indexes for table `orders`
@@ -518,16 +575,22 @@ ALTER TABLE `food_items`
   MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
+-- AUTO_INCREMENT for table `notifications`
+--
+ALTER TABLE `notifications`
+  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
+  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
 
 --
 -- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `order_item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=124;
+  MODIFY `order_item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=132;
 
 --
 -- AUTO_INCREMENT for table `stalls`
@@ -539,13 +602,13 @@ ALTER TABLE `stalls`
 -- AUTO_INCREMENT for table `transactions`
 --
 ALTER TABLE `transactions`
-  MODIFY `transaction_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `trays`
 --
 ALTER TABLE `trays`
-  MODIFY `tray_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=241;
+  MODIFY `tray_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=250;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -556,6 +619,13 @@ ALTER TABLE `users`
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `notifications`
+--
+ALTER TABLE `notifications`
+  ADD CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
+  ADD CONSTRAINT `notifications_ibfk_2` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`);
 
 --
 -- Constraints for table `transactions`
