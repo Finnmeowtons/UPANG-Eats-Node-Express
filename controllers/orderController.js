@@ -96,7 +96,8 @@ exports.getOrderByUserId = async (req, res) => {
       SELECT o.*, u.first_name, u.last_name
       FROM orders o
       JOIN users u ON o.user_id = u.user_id
-      WHERE o.user_id = ?`,
+      WHERE o.user_id = ?
+    ORDER BY o.order_id DESC`,
             [userId]
         );
 
@@ -210,7 +211,7 @@ exports.updateOrderStatus = async (req, res) => {
         } else if (order_status === 'cancelled') {
             message = `Your order #${orderId} has been cancelled.`;
         } else {
-            message = `Your order #${orderId} status is now: ${order_status}.`;
+            message = `Your order #${orderId} status is now ${order_status}.`;
         }
 
         await connection.query(
